@@ -14,6 +14,8 @@
      size_unit: gb
      junction_path: "/{{ volname | replace('_','-') }}"
      space_guarantee: "none"
+     volume_security_style: ntfs
+     wait_for_completion: true
      vserver: "{{ vserver }}"
      hostname: "{{ cluster_mgmt_lif}}"
      username: "{{ netapp_username }}"
