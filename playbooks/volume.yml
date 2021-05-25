@@ -12,7 +12,7 @@
      aggregate_name: "{{ aggr_name }}"
      size: "{{ size }}"
      size_unit: gb
-     junction_path: "/{{ volname | regex_replace('_','-') }}"
+     junction_path: "/{{ volname | replace('_','-') }}"
      space_guarantee: "none"
      vserver: "{{ vserver }}"
      hostname: "{{ cluster_mgmt_lif}}"
