@@ -13,7 +13,7 @@
      size: "{{ size }}"
      size_unit: gb
      policy: "{{ export_policy }}"
-     junction_path: "/{{ volname | replace('_','-') }}"
+     junction_path: "/{{ ( volname ) | replace('_','-') }}"
      space_guarantee: "none"
      vserver: "{{ vserver }}"
      hostname: "{{ cluster_mgmt_lif}}"
