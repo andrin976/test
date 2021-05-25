@@ -1,11 +1,18 @@
 ---
-- name: Create SVM
-  na_ontap_svm:
+- hosts: localhost
+  gather_facts: false
+  vars:
     state: present
-    name: "{{ vserver }}"
-    root_volume: rt_"{{ vserver }}"_sys
-    root_volume_aggregate: "{{ aggr_name }}"
-    root_volume_security_style: "{{ root_volume_security_style}}"
-    hostname: "{{ netapp_hostname }}"
-    username: "{{ netapp_username }}"
-    password: "{{ netapp_password }}"
+  tasks:
+  - name: Create Vserver
+    netapp.ontap.na_ontap_svm:
+     state: present
+     name: "{{ vserver }}"
+     root_volume: rt_"{{ vserver }}"_sys
+     root_volume_aggregate: "{{ aggr_name }}"
+     root_volume_security_style: "{{ root_volume_security_style}}"
+     hostname: "{{ cluster_mgmt_lif }}"
+     username: "{{ netapp_username }}"
+     password: "{{ netapp_password }}"
+     https: true
+     validate_certs: false
