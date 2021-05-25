@@ -8,7 +8,7 @@
     na_ontap_svm:
      state: present
      name: "{{ vserver }}"
-     root_volume: rt_"{{ vserver }}"_sys
+     root_volume: "rt_{{ vserver }}_sys"
      root_volume_aggregate: "{{ aggr_name }}"
      root_volume_security_style: "{{ root_volume_security_style}}"
      hostname: "{{ cluster_mgmt_lif }}"
