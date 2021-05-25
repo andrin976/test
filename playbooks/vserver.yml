@@ -5,7 +5,7 @@
     state: present
   tasks:
   - name: Create Vserver
-    netapp.ontap.na_ontap_svm:
+    na_ontap_svm:
      state: present
      name: "{{ vserver }}"
      root_volume: rt_"{{ vserver }}"_sys
