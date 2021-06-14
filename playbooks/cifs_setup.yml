@@ -11,6 +11,7 @@
       vserver: "{{ vserver }}"
       service_state: started
       domain: "{{ domain }}"
+      ou: "{{ domain_ou }}"
       admin_user_name: "{{ domain_login }}"
       admin_password: "{{ domain_pwd }}"
       hostname: "{{ cluster_mgmt_lif }}"
