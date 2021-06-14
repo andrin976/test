@@ -7,7 +7,7 @@
   - name: Create Vserver
     na_ontap_svm:
      state: present
-     subtype: "{{ subtype }} "
+     subtype: "{{ subtype }}"
      name: "{{ vserver }}"
      root_volume: "rt_{{ vserver }}_sys"
      root_volume_aggregate: "{{ aggr_name }}"
