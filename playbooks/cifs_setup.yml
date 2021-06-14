@@ -9,7 +9,7 @@
       state: "{{ state }}"
       name: "{{ vserver|upper }}"
       vserver: "{{ vserver }}"
-      service_state: stopped
+      service_state: started
       domain: "{{ domain }}"
       admin_user_name: "{{ domain_login }}"
       admin_password: "{{ domain_pwd }}"
