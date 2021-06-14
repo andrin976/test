@@ -22,7 +22,7 @@
       netmask: "{{ netmask }}"
       force_subnet_association: true
       is_dns_update_enabled: true
-      vserver: svm1
+      vserver: "{{ vserver }}"
       hostname: "{{ cluster_mgmt_lif }}"
       username: "{{ netapp_username }}"
       password: "{{ netapp_password }}"
