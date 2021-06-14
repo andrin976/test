@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    state: present
+  tasks:
+  - name: Create interface
+    na_ontap_interface:
+      state: "{{ state }}"
+      interface_name: "{{ vserver }}_cifs_nfs_lif1"
+      home_port: "{{ home_port }}"
+      home_node: "{{ home_node }}"
+      role: data
+      protocols:
+        - nfs
+        - cifs
+      admin_status: up
+      failover_policy: system-defined
+      firewall_policy: data
+      is_auto_revert: true
+      address: "{{ ip_address }}"
+      netmask: "{{ netmask }}"
+      force_subnet_association: true
+      is_dns_update_enabled: true
+      vserver: svm1
+      hostname: "{{ cluster_mgmt_lif }}"
+      username: "{{ netapp_username }}"
+      password: "{{ netapp_password }}"
+      https: true
+      validate_certs: false

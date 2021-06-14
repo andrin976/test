@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    state: present
+  tasks:
+  - name: Create CIFS share
+    na_ontap_cifs:
+      state: "{{ state }}"
+      share_name: "{{ share_name }}"
+      path: "/{{ volname | replace('_','-') }}"
+      vserver: "{{ vserver }}"
+      share_properties: "{{ share_properties }}"
+      symlink_properties: symlinks
+      hostname: "{{ cluster_mgmt_lif }}"
+      username: "{{ netapp_username }}"
+      password: "{{ netapp_password }}"
+      https: true
+      validate_certs: false

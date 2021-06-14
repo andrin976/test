@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    state: present
+  tasks:
+  - name: add ip to subnet range
+    na_ontap_net_subnet:
+      state: "{{ state }}"
+      username: "{{ netapp_username }}"
+      password: "{{ netapp_password }}"
+      hostname: "{{ cluster_mgmt_lif }}"
+      name: "{{ subnet_name }}"
+      ip_ranges: [ 'ip_address' ]
+      ipspace: "{{ ipspace }}"
+      broadcast_domain: "{{ broadcast_domain }}"
+      https: true
+      validate_certs: false
