@@ -11,7 +11,7 @@
       password: "{{ netapp_password }}"
       hostname: "{{ cluster_mgmt_lif }}"
       name: "{{ subnet_name }}"
-      ip_ranges: [ "{{ 'ip_address' }}" ]
+      ip_ranges: "{{ 'ip_address' }}"
       ipspace: "{{ ipspace }}"
       broadcast_domain: "{{ subnet_name }}"
       https: true
