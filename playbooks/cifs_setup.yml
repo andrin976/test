@@ -2,8 +2,8 @@
 - hosts: localhost
   gather_facts: false
   vars:
-  state: present
-  vservername: "{{ vserver }}"
+    state: present
+    vservername: "{{ vserver }}"
   tasks:
   - name: Create cifs_server
     na_ontap_cifs_server:
