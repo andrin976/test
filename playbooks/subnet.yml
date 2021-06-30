@@ -1,19 +1,14 @@
 ---
 - hosts: localhost
   gather_facts: false
-  vars:
-    state: present
   tasks:
-  - name: add ip to subnet range
-    na_ontap_net_subnet:
-      state: "{{ state }}"
+  - name: add subnet range
+    na_ontap_command:
       username: "{{ netapp_username }}"
       password: "{{ netapp_password }}"
       hostname: "{{ cluster_mgmt_lif }}"
-      name: "{{ subnet_name }}"
-      gateway: "{{ gateway }}"
-      ip_ranges: "{{ ip_address }}"
-      ipspace: "{{ ipspace }}"
-      broadcast_domain: "{{ subnet_name }}"
+      command: ['network', 'subnet', 'add-ranges', '-subnet-name', "{{ subnet_name }}", '-ipspace', "{{ ipspace }}", '-ip-ranges', "{{ ip_address }}"  ]
+      privilege: admin
+      use_rest: Always
       https: true
-      validate_certs: false
+      validate_certs: false  
