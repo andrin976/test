@@ -3,13 +3,12 @@
   gather_facts: false
   vars:
     state: present
-    vservername: "{{ vserver }}"
   tasks:
   - name: Create cifs_server
     na_ontap_cifs_server:
       state: "{{ state }}"
-      vserver: "{{ vservername }}"
-      cifs_server_name: "{{ vservername|upper }}"
+      vserver: "{{ vserver }}"
+      cifs_server_name: "{{ vserver|upper }}"
       service_state: started
       domain: "{{ domain }}"
       ou: "{{ domain_ou }}"
