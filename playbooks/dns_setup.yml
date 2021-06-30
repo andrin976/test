@@ -4,15 +4,15 @@
   vars:
     state: present
   tasks:
-- name: create DNS
-  na_ontap_dns:
-    state: present
-    hostname: "{{ cluster_mgmt_lif }}"
-    username: "{{ netapp_username }}"
-    password: "{{ netapp_password }}"
-    vserver:  "{{ vserver }}"
-    domains: "{{ domain }}"
-    nameservers: "{{ nameserver }}"
-    skip_validation: true
-    https: true
-    validate_certs: false
+  - name: create DNS
+    na_ontap_dns:
+      state: present
+      hostname: "{{ cluster_mgmt_lif }}"
+      username: "{{ netapp_username }}"
+      password: "{{ netapp_password }}"
+      vserver:  "{{ vserver }}"
+      domains: "{{ domain }}"
+      nameservers: "{{ nameserver }}"
+      skip_validation: true
+      https: true
+      validate_certs: false
