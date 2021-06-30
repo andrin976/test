@@ -2,13 +2,14 @@
 - hosts: localhost
   gather_facts: false
   vars:
-    state: present
+  state: present
+  vservername: "{{ vserver }}"
   tasks:
   - name: Create cifs_server
     na_ontap_cifs_server:
       state: "{{ state }}"
-      name: "{{ vserver|upper }}"
-      vserver: "{{ vserver }}"
+      vserver: "{{ vservername }}"
+      cifs_server_name: "{{ vservername|upper }}"
       service_state: started
       domain: "{{ domain }}"
       ou: "{{ domain_ou }}"
@@ -19,3 +20,4 @@
       password: "{{ netapp_password }}"
       https: true
       validate_certs: false
+      use_rest: Always
