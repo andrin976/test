@@ -1,0 +1,138 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    state: present
+    login_src_src: &login_src
+      hostname: "{{ netapp_hostname_src }}"
+      username: "{{ netapp_username }}"
+      password: "{{ netapp_password }}"
+      https: true
+      validate_certs: false
+      use_rest: Always
+  tasks:
+    - name: Create Source SVM
+      na_ontap_svm:
+        state: present
+        subtype: "{{ subtype }}"
+        name: "{{ vserver }}"
+        root_volume: "rt_{{ vserver }}_sys"
+        root_volume_aggregate: "{{ aggr_name_src }}"
+        root_volume_security_style: "{{ root_volume_security_style }}"
+        allowed_protocols: "{{ allowed_protocols }}"
+        comment: "{{ vserver_comment }}"
+        ipspace: "{{ ipspace }}"
+        <<: *login_src
+    - name: Add Subnet Range
+      na_ontap_command:
+        command:
+          [
+            "network subnet add-ranges -subnet-name {{ subnet_name }} -ipspace {{ ipspace }} -ip-ranges {{ ip_address }}",
+          ]
+        privilege: admin
+        <<: *login_src
+    - name: Create Network Interface
+      na_ontap_interface:
+        state: "{{ state }}"
+        interface_name: "{{ vserver }}_cifs_nfs_lif1"
+        home_port: "{{ home_port }}"
+        home_node: "{{ home_node }}"
+        role: data
+        protocols:
+          - nfs
+          - cifs
+        admin_status: up
+        failover_policy: system-defined
+        firewall_policy: data
+        is_auto_revert: false
+        address: "{{ ip_address }}"
+        netmask: "{{ netmask }}"
+        force_subnet_association: true
+        is_dns_update_enabled: true
+        vserver: "{{ vserver }}"
+        <<: *login_src
+    - name: Add DNS Settings to SVM
+      na_ontap_dns:
+        state: "{{ state }}"
+        vserver: "{{ vserver }}"
+        domains: "{{ domain }}"
+        nameservers: "{{ nameserver }}"
+        skip_validation: true
+        <<: *login_src
+    - name: Create CIFS-Server
+      na_ontap_cifs_server:
+        state: "{{ state }}"
+        vserver: "{{ vserver }}"
+        cifs_server_name: "{{ vserver|upper }}"
+        service_state: started
+        domain: "{{ domain }}"
+        ou: "{{ domain_ou }}"
+        admin_user_name: "{{ domain_login }}"
+        admin_password: "{{ domain_pwd }}"
+        <<: *login_src
+      when: create_cifs == "yes"
+    - name: Modify DNS Dynamic-Update
+      na_ontap_command:
+        command:
+          [
+            "vserver services dns dynamic-update modify -vserver {{ vserver }} -is-enabled true -use-secure true -ttl 1h -vserver-fqdn {{ vserver }}.{{ domain }}",
+          ]
+        privilege: advanced
+        <<: *login_src
+      when: create_cifs == 'yes'
+    - name: Modify CIFS Security SMB-Signing required
+      na_ontap_command:
+        command:
+          [
+            "vserver cifs security modify -vserver {{ vserver }} -is-signing-required true",
+          ]
+        privilege: admin
+        <<: *login_src
+      when: create_cifs == 'yes'
+    - name: Add member to CIFS local group
+      netapp.ontap.na_ontap_cifs_local_group_member:
+        state: present
+        vserver: "{{ vserver }}"
+        group: 'BUILTIN\Administrators'
+        member: "{{ add_domain_group_1 }}"
+        <<: *login_src
+      when: create_cifs == 'yes'
+    - name: Remove member from CIFS local group
+      na_ontap_command:
+        command:
+          [
+            "cifs users-and-groups local-group remove-members -vserver {{ vserver }} -group-name BUILTIN\\Administrators -member-names \"{{ domain }}\\Domain Admins\"",
+          ]
+        privilege: admin
+        <<: *login_src
+      when: create_cifs == 'yes'
+    - name: Create NFS-Server
+      na_ontap_nfs:
+        state: present
+        service_state: started
+        vserver: "{{ vserver }}"
+        nfsv3: enabled
+        nfsv4: disabled
+        <<: *login_src
+      when: create_nfs == 'yes'
+    - name: Create NFS Export Rule for Root-Volume
+      na_ontap_export_policy_rule:
+        state: present
+        name: "{{ vserver }}-nfs-root"
+        vserver: "{{ vserver }}"
+        client_match: "0.0.0.0/0"
+        ro_rule: any
+        rw_rule: never
+        protocol: nfs
+        super_user_security: any
+        <<: *login_src
+      when: create_nfs == 'yes'
+    - name: Add Export-Policy to Root-Volume
+      na_ontap_command:
+        command:
+          [
+            "volume modify -vserver {{ vserver }} -volume rt_{{ vserver }}_sys -policy {{ vserver }}-nfs-root",
+          ]
+        privilege: admin
+        <<: *login_src
+      when: create_nfs == 'yes'
